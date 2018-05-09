@@ -3,10 +3,9 @@
   font-family: var( --font__family--default );
   display: grid;
   grid: {
-    template-columns: repeat( auto-fill, 11.2rem );
+    template-columns: repeat( auto-fill, minmax(min-content ,11.2rem) );
     gap: .625rem;
   }
-
   &__card {
     height: 15rem;
   }
