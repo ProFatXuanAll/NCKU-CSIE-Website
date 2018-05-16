@@ -3,11 +3,12 @@
   font-family: var( --font__family--default );
   display: grid;
   grid: {
-    template-columns: repeat( auto-fill, minmax(min-content ,11.2rem) );
-    gap: .625rem;
+    template-columns: repeat( auto-fit, minmax( 8rem, 1fr ) );
+    gap: 1.625rem;
   }
+
   &__card {
-    height: 15rem;
+    max-height: 15rem;
   }
 
   .card {
@@ -50,8 +51,13 @@
       align-items: center;
       color: #ffffff;
       background-color: rgba( 52, 52, 52, .7 );
-      transition: opacity .3;
+      transition: opacity .3s;
       z-index: 999;
+      padding: 0 .5rem;
+
+      &__email{
+        word-break: break-all;
+      }
 
       &:hover {
         opacity: 1;
