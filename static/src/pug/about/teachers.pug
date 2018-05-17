@@ -19,16 +19,15 @@ block content
           let deptResult;
           titleResult = teacher.title.join("/");
           deptResult = teacher.department.join("/");
-            +cards__card({
-                nameText: teacher.name,
-                imageURL: teacher.img,
-                linkURL: teacher.personal_web,
-                emailURL: teacher.email,
-                titleText: titleResult,
-                deptText: deptResult,
-                addressText:  teacher.office.address,
-                phoneText: teacher.office.tel;
-            })
-      
+        +cards__card({
+          nameText: teacher.name,
+          imageURL: teacher.img,
+          linkURL: teacher.personal_web,
+          emailURL: teacher.email,
+          titleText: titleResult,
+          deptText: deptResult,
+          addressText:  teacher.office[0]?teacher.office[0].address:'',
+          phoneText: teacher.office[0]?teacher.office[0].tel:''
+      })
 block footer
 block scripts

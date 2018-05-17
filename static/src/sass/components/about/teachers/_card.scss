@@ -4,11 +4,11 @@
   display: grid;
   grid: {
     template-columns: repeat( auto-fit, minmax( 8rem, 1fr ) );
-    gap: 1.625rem;
+    gap: 2.625rem;
   }
 
   &__card {
-    max-height: 15rem;
+    height: 15rem;
   }
 
   .card {
@@ -55,7 +55,7 @@
       z-index: 999;
       padding: 0 .5rem;
 
-      &__email{
+      &__email {
         word-break: break-all;
       }
 

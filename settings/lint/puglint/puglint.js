@@ -1,11 +1,6 @@
 const indentation = 2;
 
 module.exports = {
-<<<<<<< HEAD
-
-    // no attribute concatenation
-=======
->>>>>>> b4b4ea7ba87c57ede4347792b0db82a907b94792
     disallowAttributeConcatenation: true,
 
     // no block expansion
@@ -13,11 +8,6 @@ module.exports = {
 
     // id literals must before class literals
     disallowClassLiteralsBeforeIdLiterals: true,
-<<<<<<< HEAD
-
-    // no duplicate attributes
-=======
->>>>>>> b4b4ea7ba87c57ede4347792b0db82a907b94792
     disallowDuplicateAttributes: true,
 
     // no html texts
@@ -88,10 +78,5 @@ module.exports = {
 
     // must not contain any unnecessary self colsing tags
     validateSelfClosingTags: true,
-<<<<<<< HEAD
-
-    // must use ES6 string concatenation
-=======
->>>>>>> b4b4ea7ba87c57ede4347792b0db82a907b94792
     validateTemplateString: [ 'concatenation', ],
 };
