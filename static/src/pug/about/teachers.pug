@@ -16,15 +16,30 @@ block content
       each teacher in teachers
         -
           let titleResult;
-          let deptResult;
-          titleResult = teacher.title.join("/");
+          let newDeptArr = []; let newTitleArr=[];
+          // title length calculation
+          //- teacher.title.reduce((acc,cur)=>{
+          //-   acc += cur.length;
+          //-   if(acc <= 16){
+          //-     newTitleArr.push(cur);
+          //-     console.log(cur);
+          //-   }
+          //- },0);
+          // dept length calculation
+          //- teacher.department.reduce((acc,cur)=>{
+          //-   acc += cur.length;
+          //-   if(acc <= 16){
+          //-     newDeptArr.push(cur);
+          //-   }
+          //- },0);
           deptResult = teacher.department.join("/");
+          titleResult = teacher.title.join("/");          
         +cards__card({
           nameText: teacher.name,
           imageURL: teacher.img,
-          linkURL: teacher.personal_web,
+          linkURL: teacher.personal_web ? teacher.personal_web : "",
           emailURL: teacher.email,
-          titleText: titleResult,
+          titleText: titleResult ? titleResult : " ",
           deptText: deptResult,
           addressText:  teacher.office[0]?teacher.office[0].address:'',
           phoneText: teacher.office[0]?teacher.office[0].tel:''
