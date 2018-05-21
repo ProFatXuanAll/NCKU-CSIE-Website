@@ -14,35 +14,14 @@ block content
     +topic( 'Faculty of Computer Science','師資陣容' )
     section.cards
       each teacher in teachers
-        -
-          let titleResult;
-          let newDeptArr = []; let newTitleArr=[];
-          // title length calculation
-          //- teacher.title.reduce((acc,cur)=>{
-          //-   acc += cur.length;
-          //-   if(acc <= 16){
-          //-     newTitleArr.push(cur);
-          //-     console.log(cur);
-          //-   }
-          //- },0);
-          // dept length calculation
-          //- teacher.department.reduce((acc,cur)=>{
-          //-   acc += cur.length;
-          //-   if(acc <= 16){
-          //-     newDeptArr.push(cur);
-          //-   }
-          //- },0);
-          deptResult = teacher.department.join("/");
-          titleResult = teacher.title.join("/");          
-        +cards__card({
-          nameText: teacher.name,
+        +cards__card( {
+          name: teacher.name,
           imageURL: teacher.img,
-          linkURL: teacher.personal_web ? teacher.personal_web : "",
+          linkURL:  teacher.personalWeb,
           emailURL: teacher.email,
-          titleText: titleResult ? titleResult : " ",
-          deptText: deptResult,
-          addressText:  teacher.office[0]?teacher.office[0].address:'',
-          phoneText: teacher.office[0]?teacher.office[0].tel:''
-      })
+          titles:    teacher.title,
+          depts:     teacher.department,
+          offices:   teacher.office,
+      } )
 block footer
 block scripts

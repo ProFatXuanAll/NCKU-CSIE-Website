@@ -2,125 +2,107 @@ const path = require( 'path' );
 const projectRoot = path.dirname( path.dirname( path.dirname( __dirname ) ) );
 const connect = require( `${ projectRoot }/settings/database/connect` );
 
-module.exports = async ( lang = 'zh-TW' ) => {
-    const teacher = await connect( 'teacher' );
+module.exports = async ( language = 'zh-TW' ) => {
+    const teacherDatabase = await connect( 'teacher' );
     const tables = {
-        profile: teacher.import( `${ projectRoot }/models/teacher/tables/profile` ),
-        profileI18n: teacher.import( `${ projectRoot }/models/teacher/tables/profile_i18n` ),
-        title: teacher.import( `${ projectRoot }/models/teacher/tables/title` ),
-        titleI18n: teacher.import( `${ projectRoot }/models/teacher/tables/title_i18n` ),
-        department: teacher.import( `${ projectRoot }/models/teacher/tables/department` ),
-        departmentI18n: teacher.import( `${ projectRoot }/models/teacher/tables/department_i18n` ),
-        office: teacher.import( `${ projectRoot }/models/teacher/tables/office` ),
-        officeI18n: teacher.import( `${ projectRoot }/models/teacher/tables/office_i18n` ),
+        profile:        teacherDatabase.import( `${ projectRoot }/models/teacher/tables/profile` ),
+        profileI18n:    teacherDatabase.import( `${ projectRoot }/models/teacher/tables/profile_i18n` ),
+        title:          teacherDatabase.import( `${ projectRoot }/models/teacher/tables/title` ),
+        titleI18n:      teacherDatabase.import( `${ projectRoot }/models/teacher/tables/title_i18n` ),
+        department:     teacherDatabase.import( `${ projectRoot }/models/teacher/tables/department` ),
+        departmentI18n: teacherDatabase.import( `${ projectRoot }/models/teacher/tables/department_i18n` ),
+        office:         teacherDatabase.import( `${ projectRoot }/models/teacher/tables/office` ),
+        officeI18n:     teacherDatabase.import( `${ projectRoot }/models/teacher/tables/office_i18n` ),
     };
 
+    const data = {};
+
     // Promise.all uses iterator, so it will keep the order of the elements in array that passed in
-    const result = await Promise.all(
+    [
+        data.profile,
+        data.profileI18n,
+        data.title,
+        data.titleI18n,
+        data.department,
+        data.departmentI18n,
+        data.office,
+        data.officeI18n,
+    ] = await Promise.all(
         [
             tables.profile.findAll( {
-                attributes: [ 'profile_id', 'personal_web', 'email', 'position' ],
+                attributes: [ 'profileId',
+                    'personalWeb',
+                    'email',
+                    'position', ],
             } ),
             tables.profileI18n.findAll( {
-                attributes: [ 'profile_id', 'name' ],
-                where: { language: lang },
+                attributes: [ 'profileId',
+                    'name', ],
+                where:      { language, },
             } ),
             tables.title.findAll( {
-                attributes: [ 'profile_id', 'title_id' ],
+                attributes: [ 'profileId',
+                    'titleId', ],
             } ),
             tables.titleI18n.findAll( {
-                attributes: [ 'title_id', 'title' ],
-                where: { language: lang },
+                attributes: [ 'titleId',
+                    'title', ],
+                where:      { language, },
             } ),
             tables.department.findAll( {
-                attributes: [ 'profile_id', 'department_id' ],
+                attributes: [ 'profileId',
+                    'departmentId', ],
             } ),
             tables.departmentI18n.findAll( {
-                attributes: ['department_id', 'department'],
-                where: { language: lang },
+                attributes: [ 'departmentId',
+                    'department', ],
+                where:      { language, },
             } ),
             tables.office.findAll( {
-                attributes: ['profile_id', 'office_id', 'tel'],
+                attributes: [ 'profileId',
+                    'officeId',
+                    'tel', ],
             } ),
-            tables.officeI18n.findAll({
-                attributes: ['office_id', 'address'],
-                where: { language: lang },
-            }),
+            tables.officeI18n.findAll( {
+                attributes: [ 'officeId',
+                    'address', ],
+                where:      { language, },
+            } ),
         ]
     );
 
-    const data = {
-        profile: result[0],
-        profileI18n: result[1],
-        title: result[2],
-        titleI18n: result[3],
-        department: result[4],
-        departmentI18n: result[5],
-        office: result[6],
-        officeI18n: result[7],
-    };
+    teacherDatabase.close();
 
-    let teachersProfile = [];
-    data.profile.forEach( dataInProfile => {
-        let profile = {
-            name: '',
-            personal_web: '',
-            email: '',
-            title: [],
-            department: [],
-            office: [],
-            position: 0,
-            image: 'http://via.placeholder.com/300x600',
-        };
-        // set basic profile information
-        profile.personal_web = dataInProfile.personal_web;
-        profile.email = dataInProfile.email;
-        profile.position = dataInProfile.position;
-        profile.name = data.profileI18n.find(x => x.profile_id === dataInProfile.profile_id).name;
-
-        // get all title_id for a teacher, and use it to find all titles for this teacher
-        let titleId = [];
-        data.title.forEach( dataInTitle => {
-            if(dataInTitle.profile_id === dataInProfile.profile_id){
-                titleId.push(dataInTitle.title_id);
-            }
-        });
-        titleId.forEach( id => {
-            profile.title.push(data.titleI18n.find(x => x.title_id === id).title);
-        });
-
-        // get all department_id for a teacher, and use it to find all departments for this teacher
-        let departmentId = [];
-        data.department.forEach( dataInDepartment => {
-            if(dataInDepartment.profile_id === dataInProfile.profile_id){
-                departmentId.push(dataInDepartment.department_id);
-            }
-        });
-        departmentId.forEach( (id, index) => {
-            profile.department.push(data.departmentI18n.find(x => x.department_id === id).department);
-        });
-
-        // get all office_id for a teacher, and use it to find all office and tel for this teacher
-        let officeIdWithTel = [];
-        data.office.forEach( dataInOffice => {
-            if(dataInOffice.profile_id === dataInProfile.profile_id){
-                officeIdWithTel.push({
-                    officeId: dataInOffice.office_id,
-                    tel: dataInOffice.tel,
-                });
-            }
-        });
-        officeIdWithTel.forEach( item => {
-            profile.office.push({
-                address: data.officeI18n.find(x => x.office_id === item.officeId).address,
-                tel: item.tel,
-            });
-        });
-        teachersProfile.push(profile);
-    });
-
-    teacher.close();
-
-    return teachersProfile;
-
+    return data.profile.map( profile => ( {
+        name: data.profileI18n
+            .find( profileI18n => profileI18n.profileId === profile.profileId )
+            .name,
+        personalWeb: profile.personalWeb,
+        email:       profile.email,
+        title:       data.title
+            .filter( title => title.profileId === profile.profileId )
+            .map(
+                title => data.titleI18n
+                    .find( titleI18n => titleI18n.titleId === title.titleId )
+                    .title
+            ),
+        department: data.department
+            .filter( department => department.profileId === profile.profileId )
+            .map(
+                department => data.departmentI18n
+                    .find( departmentI18n => departmentI18n.departmentId === department.departmentId )
+                    .department
+            ),
+        office: data.office
+            .filter( office => office.profileId === profile.profileId )
+            .map( office => ( {
+                address:
+                    data.officeI18n
+                        .find( officeI18n => officeI18n.officeId === office.officeId )
+                        .address,
+                tel: office.tel,
+            } ) ),
+        position: profile.position,
+        image:    'http://via.placeholder.com/300x600',
+    } ) );
 };
